@@ -5,6 +5,7 @@ const useTime = () => {
   const [time, setTime] = useState({
     time: 0,
     accumulatedTime: 0,
+    deltaTime: 0,
     startTime: 0,
   });
 
@@ -16,11 +17,15 @@ const useTime = () => {
     if (paused) return;
 
     const interval = setInterval(() => {
-      setTime(({ startTime, accumulatedTime }) => {
+      setTime(({ time: oldTime, startTime, accumulatedTime }) => {
+        const now = Date.now();
         let newStartTime = startTime;
-        if (startTime === 0) newStartTime = Date.now();
+        if (startTime === 0) newStartTime = now;
+
+        const newTime = accumulatedTime + now - newStartTime;
         return {
-          time: accumulatedTime + Date.now() - newStartTime,
+          time: newTime,
+          deltaTime: newTime - oldTime,
           startTime: newStartTime,
           accumulatedTime,
         };
@@ -29,15 +34,20 @@ const useTime = () => {
 
     return () => {
       clearInterval(interval);
-      setTime(({ time, startTime, accumulatedTime }) => ({
-        startTime: 0,
-        accumulatedTime: accumulatedTime + Date.now() - startTime,
-        time,
-      }));
+      setTime(({ time: oldTime, startTime, accumulatedTime }) => {
+        const now = Date.now();
+        const newTime = accumulatedTime + now - startTime;
+        return {
+          startTime: 0,
+          deltaTime: newTime - oldTime,
+          accumulatedTime: newTime,
+          time: newTime,
+        };
+      });
     };
   }, [paused]);
 
-  return [time.time, toggle, paused] as const;
+  return [time.time, toggle, paused, time.deltaTime] as const;
 };
 
 export default useTime;
