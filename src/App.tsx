@@ -1,76 +1,13 @@
-import { PriorityQueue } from '@datastructures-js/priority-queue';
-import useTime from './hooks/useTime';
-import { useEffect, useRef, useState } from 'react';
-
-interface IProcess {
-  pid: number;
-  start: number;
-  duration: number;
-}
-
-interface ISjfScheduler {
-  idCount: number;
-  processes: PriorityQueue<IProcess>;
-  dequeue: () => IProcess | null;
-  getCurrentProcess: () => IProcess | null;
-  createProcess: (start: number, duration: number) => void;
-}
-
-const randbetween = (max: number, min: number) => {
-  return Math.random() * (max - min) + min;
-};
+import useSjfScheduler from './hooks/useSjfScheduler';
+import toSecond from './utils/toSecond';
 
 const App = () => {
-  const [time, toggle, isPaused, deltaTime] = useTime();
-  const schedulerRef = useRef<ISjfScheduler | null>();
-  const [processes, setProcesses] = useState<IProcess[]>([]);
-
-  useEffect(() => {
-    schedulerRef.current = {
-      idCount: 0,
-      processes: new PriorityQueue<IProcess>((a, b) => a.duration - b.duration),
-      createProcess: function (start, duration) {
-        this.processes.enqueue({ pid: this.idCount, duration, start });
-        this.idCount++;
-      },
-      dequeue: function () {
-        if (this.getCurrentProcess() === null) return null;
-        return this.processes.dequeue();
-      },
-      getCurrentProcess: function () {
-        return this.processes.front();
-      },
-    };
-  }, []);
-
-  useEffect(() => {
-    const scheduler = schedulerRef.current;
-    if (!scheduler) return;
-
-    const currentProcess = scheduler.getCurrentProcess();
-    if (!currentProcess) return;
-
-    currentProcess.duration -= deltaTime;
-    if (currentProcess.duration <= 0) scheduler.dequeue();
-
-    setProcesses(scheduler.processes.toArray());
-  }, [deltaTime]);
-
-  const spawnProcess = () => {
-    const scheduler = schedulerRef.current;
-    if (!scheduler) return;
-
-    scheduler.createProcess(
-      Math.ceil(time),
-      Math.floor(randbetween(2, 10)) * 1000
-    );
-    setProcesses(scheduler.processes.toArray());
-  };
+  const { processes, time, isPaused, spawnProcess, toggle } = useSjfScheduler();
 
   return (
     <div>
       <h1>SJF Scheduler</h1>
-      <p>Time: {(time / 1000).toFixed(3)}</p>
+      <p>Time: {toSecond(time)}</p>
       <button onClick={toggle}>{isPaused ? 'Play' : 'Pause'}</button>
       <button onClick={spawnProcess}>Spawn process</button>
       <ul>
@@ -85,8 +22,8 @@ const App = () => {
           processes.map(({ pid, start, duration }) => (
             <li key={pid}>
               <span>{pid}</span>
-              <span>{(start / 1000).toFixed(1)}</span>
-              <span>{(duration / 1000).toFixed(1)}</span>
+              <span>{toSecond(start, 1)}</span>
+              <span>{toSecond(duration, 1)}</span>
             </li>
           ))
         )}
