@@ -16,9 +16,10 @@ const useTime = () => {
   useEffect(() => {
     if (paused) return;
 
+    let now: number;
     const interval = setInterval(() => {
       setTime(({ time: oldTime, startTime, accumulatedTime }) => {
-        const now = Date.now();
+        now = Date.now();
         let newStartTime = startTime;
         if (startTime === 0) newStartTime = now;
 
@@ -35,7 +36,6 @@ const useTime = () => {
     return () => {
       clearInterval(interval);
       setTime(({ time: oldTime, startTime, accumulatedTime }) => {
-        const now = Date.now();
         const newTime = accumulatedTime + now - startTime;
         return {
           startTime: 0,
