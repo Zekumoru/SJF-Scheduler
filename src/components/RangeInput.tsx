@@ -17,7 +17,7 @@ const RangeInput = ({
 }) => {
   const id = useId();
   const [value, setValue] = useState(initialValue ?? 1);
-  const [valueText, setValueText] = useState('1');
+  const [valueText, setValueText] = useState(initialValue?.toString() ?? '1');
 
   useEffect(() => {
     const value = Number(valueText);
