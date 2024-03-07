@@ -4,6 +4,6 @@ export default interface IProcess {
   initialDuration: number;
   start: number;
   duration: number;
-  status: 'ready' | 'run' | 'wait';
+  status: 'ready' | 'run' | 'wait' | 'terminated';
   responseTime: number;
 }

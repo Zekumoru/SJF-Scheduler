@@ -9,6 +9,9 @@ const useSjfScheduler = () => {
   const [isPreemptive, setIsPreemptive] = useState(false);
   const schedulerRef = useRef<ISjfScheduler | null>();
   const [processes, setProcesses] = useState<IProcess[]>([]);
+  const [terminatedProcesses, setTerminatedProcesses] = useState<IProcess[]>(
+    []
+  );
 
   useEffect(() => {
     schedulerRef.current = createSjfScheduler();
@@ -31,7 +34,10 @@ const useSjfScheduler = () => {
     currentProcess.duration -= time - currentProcess.start;
     currentProcess.start = time;
     if (currentProcess.duration <= 0) {
+      // process finished, dequeue it
       scheduler.dequeue();
+      currentProcess.status = 'terminated';
+      setTerminatedProcesses((processes) => [...processes, currentProcess]);
       const nextProcess = scheduler.getCurrentProcess();
       if (nextProcess) nextProcess.start = time;
     }
@@ -78,6 +84,7 @@ const useSjfScheduler = () => {
     toggle,
     isPaused,
     processes,
+    terminatedProcesses,
     time,
   };
 };
