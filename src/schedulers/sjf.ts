@@ -17,6 +17,8 @@ export const createSjfScheduler = (): ISjfScheduler => {
       if (a.status === 'run') return -1;
       if (b.status === 'run') return -1;
     }
+
+    if (a.duration - b.duration === 0) return a.pid - b.pid;
     return a.duration - b.duration;
   });
 
