@@ -4,7 +4,13 @@ import IProcess from '../types/process';
 import randbetween from '../utils/randbetween';
 import { ISjfScheduler, createSjfScheduler } from '../schedulers/sjf';
 
-const useSjfScheduler = () => {
+const useSjfScheduler = ({
+  maxDuration,
+  minDuration,
+}: {
+  minDuration: number;
+  maxDuration: number;
+}) => {
   const [time, toggle, isPaused] = useTime();
   const [isPreemptive, setIsPreemptive] = useState(false);
   const schedulerRef = useRef<ISjfScheduler | null>();
@@ -52,7 +58,7 @@ const useSjfScheduler = () => {
     const prevProcess = scheduler.getCurrentProcess();
     scheduler.createProcess(
       Math.ceil(time),
-      Math.floor(randbetween(2, 10)) * 1000
+      randbetween(minDuration, maxDuration) * 1000
     );
 
     if (prevProcess !== null && prevProcess !== scheduler.getCurrentProcess()) {

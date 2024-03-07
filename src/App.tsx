@@ -1,7 +1,11 @@
+import { useState } from 'react';
+import RangeInput from './components/RangeInput';
 import useSjfScheduler from './hooks/useSjfScheduler';
 import toSecond from './utils/toSecond';
 
 const App = () => {
+  const [minDuration, setMinDuration] = useState(2);
+  const [maxDuration, setMaxDuration] = useState(8);
   const {
     processes,
     terminatedProcesses,
@@ -11,7 +15,10 @@ const App = () => {
     toggle,
     isPreemptive,
     setIsPreemptive,
-  } = useSjfScheduler();
+  } = useSjfScheduler({
+    minDuration,
+    maxDuration,
+  });
 
   return (
     <div>
@@ -26,9 +33,25 @@ const App = () => {
       />
       <button onClick={toggle}>{isPaused ? 'Play' : 'Pause'}</button>
       <button onClick={spawnProcess}>Spawn process</button>
+      <RangeInput
+        label="Process min duration"
+        min={0.001}
+        step={0.001}
+        max={maxDuration}
+        value={minDuration}
+        onChange={setMinDuration}
+      />
+      <RangeInput
+        label="Process max duration"
+        min={0.001}
+        step={0.001}
+        max={60}
+        value={maxDuration}
+        onChange={setMaxDuration}
+      />
       <h2>Processes</h2>
       <ul>
-        <li>
+        <li style={{ fontWeight: 'bold' }}>
           <span>PID</span>
           <span>Start</span>
           <span>Initial Start</span>
@@ -62,7 +85,7 @@ const App = () => {
       </ul>
       <h2>Terminated Processes</h2>
       <ul>
-        <li>
+        <li style={{ fontWeight: 'bold' }}>
           <span>PID</span>
           <span>Start</span>
           <span>Ended</span>
