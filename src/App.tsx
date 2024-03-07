@@ -113,18 +113,27 @@ const App = () => {
           <span>Ended</span>
           <span>Duration</span>
           <span>Status</span>
+          <span>Response Time</span>
         </li>
         {!terminatedProcesses.length ? (
           <p>No terminated processes.</p>
         ) : (
           terminatedProcesses.map(
-            ({ pid, start, initialStart, initialDuration, status }) => (
+            ({
+              pid,
+              start,
+              initialStart,
+              initialDuration,
+              status,
+              responseTime,
+            }) => (
               <li key={pid}>
                 <span>{pid}</span>
                 <span>{toSecond(initialStart)}</span>
                 <span>{toSecond(start)}</span> {/* Ended */}
                 <span>{toSecond(initialDuration)}</span>
                 <span>{status}</span>
+                <span>{toSecond(responseTime)}</span>
               </li>
             )
           )
