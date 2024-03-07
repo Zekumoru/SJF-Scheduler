@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import RangeInput from './components/RangeInput';
 import useSjfScheduler from './hooks/useSjfScheduler';
 import toSecond from './utils/toSecond';
@@ -6,6 +6,9 @@ import toSecond from './utils/toSecond';
 const App = () => {
   const [minDuration, setMinDuration] = useState(2);
   const [maxDuration, setMaxDuration] = useState(8);
+  const [isGenRandom, setIsGenRandom] = useState(false);
+  const [genProbability, setGenProbability] = useState(0.3);
+  const [nextRandTime, setNextRandItem] = useState(0);
   const {
     processes,
     terminatedProcesses,
@@ -41,17 +44,40 @@ const App = () => {
     );
   }, [terminatedProcesses]);
 
+  useEffect(() => {
+    if (isPaused) return;
+    if (!isGenRandom) return;
+
+    if (time > nextRandTime) {
+      setNextRandItem(time + 1000); // 1 second
+      if (Math.random() < genProbability) {
+        spawnProcess();
+      }
+    }
+  }, [nextRandTime, isPaused, isGenRandom, time, spawnProcess, genProbability]);
+
   return (
     <main>
       <h1>SJF Scheduler</h1>
       <p>Time: {toSecond(time)}</p>
-      <label htmlFor="is-preemptive">Preemptive?</label>
-      <input
-        type="checkbox"
-        id="is-preemptive"
-        checked={isPreemptive}
-        onChange={() => setIsPreemptive(!isPreemptive)}
-      />
+      <div>
+        <label htmlFor="is-preemptive">Preemptive?</label>
+        <input
+          type="checkbox"
+          id="is-preemptive"
+          checked={isPreemptive}
+          onChange={() => setIsPreemptive(!isPreemptive)}
+        />
+      </div>
+      <div>
+        <label htmlFor="is-gen-random">Generate random process?</label>
+        <input
+          type="checkbox"
+          id="is-gen-random"
+          checked={isGenRandom}
+          onChange={() => setIsGenRandom(!isGenRandom)}
+        />
+      </div>
       <button onClick={toggle}>{isPaused ? 'Play' : 'Pause'}</button>
       <button onClick={spawnProcess}>Spawn process</button>
       <RangeInput
@@ -70,6 +96,16 @@ const App = () => {
         value={maxDuration}
         onChange={setMaxDuration}
       />
+      {isGenRandom && (
+        <RangeInput
+          label="Process generation probability"
+          min={0.01}
+          step={0.01}
+          max={1}
+          value={genProbability}
+          onChange={setGenProbability}
+        />
+      )}
       <p>Average waiting time: {toSecond(averageWaitingTime)}</p>
       <h2>Processes</h2>
       <ul>
