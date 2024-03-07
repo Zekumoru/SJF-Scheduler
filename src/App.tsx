@@ -139,6 +139,20 @@ const App = () => {
           )
         )}
       </ul>
+      <div>
+        <p>
+          Favicon from{' '}
+          <a
+            href="https://www.flaticon.com/free-icons/process"
+            title="process icons"
+            rel="noreferrer noopener"
+          >
+            Freepik
+          </a>{' '}
+          | Created by{' '}
+          <a href="https://github.com/Zekumoru/SJF-Scheduler">Zekumoru</a>.
+        </p>
+      </div>
     </main>
   );
 };
