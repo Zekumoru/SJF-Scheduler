@@ -42,7 +42,7 @@ const App = () => {
   }, [terminatedProcesses]);
 
   return (
-    <div>
+    <main>
       <h1>SJF Scheduler</h1>
       <p>Time: {toSecond(time)}</p>
       <label htmlFor="is-preemptive">Preemptive?</label>
@@ -130,7 +130,7 @@ const App = () => {
           )
         )}
       </ul>
-    </div>
+    </main>
   );
 };
 

@@ -5,8 +5,14 @@ ul {
 
 li {
   display: flex;
+  gap: 4px;
 }
 
 li span {
   flex: 1;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
 }
