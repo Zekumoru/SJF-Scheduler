@@ -2,6 +2,9 @@ import { useState } from 'react';
 import useRRScheduler from '../hooks/useRRScheduler';
 import RangeInput from './RangeInput';
 import toSecond from '../utils/toSecond';
+import useGenTime from '../hooks/useGenTime';
+import useAverageWaitingTime from '../hooks/useAverageWaitingTime';
+import useAverageResponseTime from '../hooks/useAverageResponseTime';
 
 const RRScheduler = () => {
   const [minDuration, setMinDuration] = useState(2);
@@ -19,6 +22,10 @@ const RRScheduler = () => {
     minDuration,
     maxDuration,
   });
+  const { isGenRandom, setIsGenRandom, genProbability, setGenProbability } =
+    useGenTime(time, isPaused, spawnProcess);
+  const averageWaitingTime = useAverageWaitingTime(terminatedProcesses);
+  const averageResponseTime = useAverageResponseTime(terminatedProcesses);
 
   return (
     <>
@@ -29,6 +36,15 @@ const RRScheduler = () => {
         Current Time Slice:{' '}
         {currentTimeSlice > 0 ? toSecond(currentTimeSlice) : 'Not set'}
       </p>
+      <div>
+        <label htmlFor="is-gen-random">Generate random process?</label>
+        <input
+          type="checkbox"
+          id="is-gen-random"
+          checked={isGenRandom}
+          onChange={() => setIsGenRandom(!isGenRandom)}
+        />
+      </div>
       <button onClick={toggle}>{isPaused ? 'Play' : 'Pause'}</button>
       <button onClick={spawnProcess}>Spawn process</button>
       <RangeInput
@@ -47,6 +63,18 @@ const RRScheduler = () => {
         value={maxDuration}
         onChange={setMaxDuration}
       />
+      {isGenRandom && (
+        <RangeInput
+          label="Process generation probability"
+          min={0.01}
+          step={0.01}
+          max={1}
+          value={genProbability}
+          onChange={setGenProbability}
+        />
+      )}
+      <p>Average waiting time: {toSecond(averageWaitingTime)}</p>
+      <p>Average response time: {toSecond(averageResponseTime)}</p>
       <h2>Processes</h2>
       <ul>
         <li style={{ fontWeight: 'bold' }}>
@@ -73,7 +101,12 @@ const RRScheduler = () => {
               <li
                 key={pid}
                 style={{
-                  background: responseTime != -1 ? 'red' : undefined,
+                  background:
+                    status === 'run'
+                      ? 'green'
+                      : responseTime != -1
+                      ? 'red'
+                      : undefined,
                 }}
               >
                 <span>{pid}</span>
