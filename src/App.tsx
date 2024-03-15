@@ -1,9 +1,9 @@
-import SjfScheduler from './components/SjfScheduler';
+import RRScheduler from './components/RRScheduler';
 
 const App = () => {
   return (
     <main>
-      <SjfScheduler />
+      <RRScheduler />
     </main>
   );
 };
