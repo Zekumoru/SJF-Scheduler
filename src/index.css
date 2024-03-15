@@ -1,3 +1,9 @@
+html {
+  background-color: #18191a;
+  color: #fefefe;
+  color-scheme: dark;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
