@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import useSjfScheduler from '../hooks/useSjfScheduler';
 import toSecond from '../utils/toSecond';
 import RangeInput from './RangeInput';
+import useGenTime from '../hooks/useGenTime';
+import useAverageWaitingTime from '../hooks/useAverageWaitingTime';
 
 const SjfScheduler = () => {
   const [minDuration, setMinDuration] = useState(2);
   const [maxDuration, setMaxDuration] = useState(8);
-  const [isGenRandom, setIsGenRandom] = useState(false);
-  const [genProbability, setGenProbability] = useState(0.3);
-  const [nextRandTime, setNextRandItem] = useState(0);
   const {
     processes,
     terminatedProcesses,
@@ -22,39 +21,9 @@ const SjfScheduler = () => {
     minDuration,
     maxDuration,
   });
-
-  const averageWaitingTime = useMemo(() => {
-    if (terminatedProcesses.length === 0) return 0;
-
-    const waitingTimes = terminatedProcesses.map((process) => {
-      // turnaround time = exit time - arrival time
-      // start is updated to be the exit time
-      const turnaroundTime = process.start - process.initialStart;
-
-      // burst time = total duration - duration left
-      const burstTime = process.initialDuration - process.duration;
-
-      // waiting time = turnaround time - burst time
-      return turnaroundTime - burstTime;
-    });
-
-    return (
-      waitingTimes.reduce((sum, waitingTime) => waitingTime + sum, 0) /
-      waitingTimes.length
-    );
-  }, [terminatedProcesses]);
-
-  useEffect(() => {
-    if (isPaused) return;
-    if (!isGenRandom) return;
-
-    if (time > nextRandTime) {
-      setNextRandItem(time + 1000); // 1 second
-      if (Math.random() < genProbability) {
-        spawnProcess();
-      }
-    }
-  }, [nextRandTime, isPaused, isGenRandom, time, spawnProcess, genProbability]);
+  const { isGenRandom, setIsGenRandom, genProbability, setGenProbability } =
+    useGenTime(time, isPaused, spawnProcess);
+  const averageWaitingTime = useAverageWaitingTime(terminatedProcesses);
 
   return (
     <>
