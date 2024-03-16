@@ -12,7 +12,7 @@ const MainNavItem = ({ children }: { children: ReactNode }) => {
 const MainNavBar = () => {
   return (
     <nav className="bg-neutral-950" aria-label="main navigation">
-      <ul className="flex max-w-[1200px] mx-auto flex-col md:flex-row">
+      <ul className="flex max-w-screen-xl mx-auto flex-col md:flex-row">
         <Link to="/">
           <MainNavItem>Home</MainNavItem>
         </Link>
