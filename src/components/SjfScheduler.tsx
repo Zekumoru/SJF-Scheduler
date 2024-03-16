@@ -155,7 +155,7 @@ const SjfScheduler = () => {
             Freepik
           </a>{' '}
           | Created by{' '}
-          <a href="https://github.com/Zekumoru/SJF-Scheduler">Zekumoru</a>.
+          <a href="https://github.com/Zekumoru/schedulers">Zekumoru</a>.
         </p>
       </div>
     </>
