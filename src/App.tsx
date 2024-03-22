@@ -7,7 +7,7 @@ import Credits from './components/Credits';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/schedulers">
       <div className="flex min-h-screen flex-col">
         <MainNavBar />
         <main>
