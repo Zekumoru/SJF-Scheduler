@@ -31,11 +31,16 @@ const RangeInput = ({
   }, [onChange, value]);
 
   return (
-    <div>
-      {label && <label htmlFor={`value-${id}`}>{label}</label>}
+    <div className="flex items-center gap-2 flex-col md:flex-row">
+      {label && (
+        <label className="text-nowrap w-full md:w-auto" htmlFor={`value-${id}`}>
+          {label}
+        </label>
+      )}
       <input
         type="range"
         id={`value-${id}`}
+        className="range range-secondary range-sm"
         onChange={(e) => {
           setValueText(e.target.value.toString());
           setValue(Number(e.target.value));
@@ -47,6 +52,7 @@ const RangeInput = ({
       />
       <input
         type="text"
+        className="input input-bordered w-full md:w-auto"
         value={valueText}
         onChange={(e) => {
           if (
@@ -57,7 +63,6 @@ const RangeInput = ({
           setValueText(e.target.value);
         }}
       />
-      {max && Number(valueText) > max && <span>Maximum is {max}.</span>}
     </div>
   );
 };

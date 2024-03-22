@@ -3,12 +3,14 @@
 @tailwind utilities;
 
 html {
-  background-color: #18191a;
-  color: #fefefe;
   color-scheme: dark;
 }
 
 @layer components {
+  html {
+    @apply bg-neutral-900;
+  }
+
   h1 {
     @apply text-4xl my-2;
   }
